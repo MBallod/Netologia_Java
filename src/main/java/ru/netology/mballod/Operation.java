@@ -3,11 +3,12 @@ package ru.netology.mballod;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.io.Serializable;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.InputMismatchException;
 
-public class Operation implements ConsolePrintable{
+public class Operation implements ConsolePrintable, Serializable {
     @Getter
     private LocalDate date;
     @Getter

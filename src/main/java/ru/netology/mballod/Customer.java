@@ -3,8 +3,10 @@ package ru.netology.mballod;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.io.Serializable;
+
 @Getter
-public class Customer implements ConsolePrintable{
+public class Customer implements ConsolePrintable, Serializable {
     @Setter
     private String name;
     private int age;
