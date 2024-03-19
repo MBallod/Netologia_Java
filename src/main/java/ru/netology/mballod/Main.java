@@ -57,14 +57,38 @@ public class Main {
         }
         return array;
     }
-    public static void main(String[] args) {
+    public static void AddOpToStatement(int transaction_n) throws CustomerOperationOutOfBoundException {
+        Scanner scanner = new Scanner(System.in);
+        Operation operation = new Operation();
+        try {
+            System.out.println("Введите номер клиента - от 1 до " + N_OF_CUSTOMERS);
+            int client = scanner.nextInt() - 1;
+            if (client>N_OF_CUSTOMERS-1 || client<0)
+                throw new CustomerOperationOutOfBoundException(client+1, transaction_n+1);
+            System.out.println("Введите дату транзакции в формате: " + Operation.pattern + ", например 2024-2-21");
+            String DateForInput = scanner.next();
+            operation.setDate(LocalDate.parse(DateForInput, Operation.formatter));
+            System.out.println("Введите сумму транзакции в рублях, разделяя точкой целую и дробную часть");
+            operation.setAmount(scanner.nextDouble());
+            System.out.println("Транзакция входящая (y) или исходящая (n)?");
+            operation.setDebitFromString(scanner.next());
+            operations[transaction_n] = operation;
+
+            statement[client] = ArrayIntAppend(statement[client], transaction_n);
+            operations[transaction_n].print();
+
+        } catch (InputMismatchException | DateTimeParseException  e1) {
+            System.out.println("Неверный формат ввода");
+        }
+    }
+    public static void main(String[] args) throws CustomerOperationOutOfBoundException {
         Scanner scanner = new Scanner(System.in);
         System.out.println("Общее число клиентов: "+ N_OF_CUSTOMERS);
         System.out.println("Общее число транзакций: "+ N_OF_TRANSACTIONS);
 
         for(int client = 0; client<N_OF_CUSTOMERS;client++) {
             Customer customer = new Customer();
-            System.out.println("Введите информацию о кллиенте номер " + (client + 1));
+            System.out.println("Введите информацию о клиенте номер " + (client + 1));
             try {
                 System.out.println("Введите полное имя клиента: ");
                 customer.setName(scanner.next());
@@ -78,26 +102,8 @@ public class Main {
             }
         }
         for (int transaction = 0; transaction < N_OF_TRANSACTIONS; transaction++) {
-            Operation operation = new Operation();
             System.out.println("Введите информацию о транзакции номер " + (transaction + 1));
-            try {
-                System.out.println("Введите номер клиента - от 1 до " + N_OF_CUSTOMERS);
-                int client = scanner.nextInt() - 1;
-                System.out.println("Введите дату транзакции в формате: " + Operation.pattern + ", например 2024-2-21");
-                String DateForInput = scanner.next();
-                operation.setDate(LocalDate.parse(DateForInput, Operation.formatter));
-                System.out.println("Введите сумму транзакции в рублях, разделяя точкой целую и дробную часть");
-                operation.setAmount(scanner.nextDouble());
-                System.out.println("Транзакция входящая (y) или исходящая (n)?");
-                operation.setDebitFromString(scanner.next());
-                operations[transaction] = operation;
-
-                statement[client] = ArrayIntAppend(statement[client], transaction);
-                operations[transaction].print();
-
-            } catch (InputMismatchException | DateTimeParseException | ArrayIndexOutOfBoundsException e1) {
-                System.out.println("Неверный формат ввода");
-                }
+            AddOpToStatement(transaction);
             }
         /*
             //вывод информации о всех корректно записанных транзакциях
@@ -109,6 +115,8 @@ public class Main {
         */
         System.out.println("Вывод информации об операциях клиента. Введите номер клиента");
         int clientId = scanner.nextInt()-1;
+        if (clientId>N_OF_CUSTOMERS-1 || clientId<0)
+            throw new CustomerOperationOutOfBoundException(clientId+1, 0); //реальной транзакции нет, но номер клиента неверный
         customers[clientId].print();
         printOperations(clientId);
 
