@@ -26,13 +26,13 @@ public class IOService {
             return null;
         }
     }
-    public static int ClientNumInput (int transaction_n, int nOfCustomers){ // ввод номера клиента
+    public static Customer whoIsClient (OperationData operationData){ // ввод номера клиента
         Scanner scanner = new Scanner(System.in);
-        System.out.println("Чья это транзакция: введите номер клиента - от 1 до " + nOfCustomers);
-        int client = scanner.nextInt() - 1;
-        if (client > nOfCustomers-1 || client<0)
-            throw new CustomerOperationOutOfBoundException(client+1, transaction_n+1);
-        return client;
+        System.out.println("Чья это транзакция: введите номер клиента - от 1 до " +OperationData.N_OF_CUSTOMERS);
+        int clientId = scanner.nextInt() - 1;
+        if (clientId > OperationData.N_OF_CUSTOMERS-1 || clientId<0)
+            throw new CustomerOperationOutOfBoundException(clientId+1);
+        return operationData.getCustomers().findCustomerById(clientId);
     }
     public static Customer CustomerInput() {// ввод информации о клиенте
         Scanner scanner = new Scanner(System.in);
@@ -52,7 +52,7 @@ public class IOService {
     }
     public static void printOperations(OperationData operationData, int clientId){  // вывод всех операций клиента
         System.out.println("Операции клиента: " + (clientId+1));
-        for (Operation op: operationData.getOperations(clientId).getOperations().values) op.print();
+        for (Operation op: operationData.getOperations(clientId).getOperations()) op.print();
     }
 
     public static void printOperations(OperationData operationData){
@@ -60,8 +60,8 @@ public class IOService {
         Scanner scanner = new Scanner(System.in);
         int clientId = scanner.nextInt()-1;
         if (clientId > OperationData.N_OF_CUSTOMERS -1 || clientId<0)
-            throw new CustomerOperationOutOfBoundException(clientId+1, 0); //реальной транзакции нет, но номер клиента неверный
-        operationData.getCustomers().getCustomers().values.get(clientId).print();
+            throw new CustomerOperationOutOfBoundException(clientId+1); //реальной транзакции нет, но номер клиента неверный
+        operationData.getCustomers().getCustomers().get(clientId).print();
         //operationData.getCustomers().getCustomers()[clientId].print();//.getCustomers()[clientId].print();
         printOperations(operationData, clientId);
     }

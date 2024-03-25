@@ -1,16 +1,16 @@
 package ru.netology.mballod;
 
+import lombok.Data;
 import lombok.Getter;
 import lombok.Setter;
 
 import java.io.Serializable;
 
-@Getter
+@Data
 public class Customer implements ConsolePrintable, Serializable {
-    @Setter
+    private int id;
     private String name;
     private int age;
-    @Setter
     private double wealth;
     public Customer() {
         this.name = null;
@@ -22,7 +22,6 @@ public class Customer implements ConsolePrintable, Serializable {
         this.age = age;
         this.wealth = wealth;
     }
-
     public void setAge(int age) {
         this.age = (age > 0 && age < 200) ? age : this.age;
     }

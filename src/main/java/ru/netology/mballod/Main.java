@@ -14,18 +14,24 @@ public class Main {
         for(int client = 0; client< OperationData.N_OF_CUSTOMERS; client++) { // to CustomerService
             System.out.println("Введите информацию о клиенте номер " + (client + 1));
             Customer customer = IOService.CustomerInput();
+            customer.setId(client);
             operationData.getCustomers().setCustomers(client, customer);
         }
         for (int transaction = 0; transaction < OperationData.N_OF_TRANSACTIONS; transaction++) { // to StatementService
             System.out.println("Введите информацию о транзакции номер " + (transaction + 1));
-            operationData.getOperations().AddOpToOperations(transaction);
-            operationData.getStatement().AddOpToStatement(transaction);
+            Operation operation = IOService.OperationInput();
+            operation.setId(transaction);
+            operationData.getOperations().addOperation(operation);
+            Customer customer = IOService.whoIsClient(operationData); //важен порядок ввода - сначала клиенты, потом операции. whoIsClient нужен заполненый список клиентов
+            operationData.getStatement().AddOpToStatement(customer, operation);
             }
-        IOService.printOperations(operationData);
 
         IOService.putOperationDataInFile(operationData);
         OperationData operationsDataFromFile = IOService.takeOperationDataFromFile();
         //Проверим, корректны ли данные о клиенте и его транзакиях, полученные из файла
         IOService.printOperations(operationsDataFromFile);
+        //Зачем в программе обрабатывать пустую очередь - непонятно
+        AsyncInputOperationService asyncInputOperationService = new AsyncInputOperationService(operationData.getOperations());
+        asyncInputOperationService.startAsyncOperationProcessing();
     }
 }
